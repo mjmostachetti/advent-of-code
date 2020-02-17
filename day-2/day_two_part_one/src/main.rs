@@ -4,7 +4,14 @@ fn main() {
     let path = "/Users/michaelmostachetti/dev/advent-of-code/day-2/day_two_part_one/src/input.txt";
 
     // read the file
-    let file_string = fs::read_to_string(path).unwrap();
+    let file_result = fs::read_to_string(path);
+
+    let file_string = match file_result {
+        Ok(file) => file,
+        Err(_error) => {
+            panic!("game over.")
+        }
+    };
     // split into a vector
     print!("{}\n", file_string);
 
@@ -34,9 +41,13 @@ fn run_program(mut v: Vec<u64>, opcode_position: u64) -> u64 {
     let fourth_index = &third_index + 1;
     let set_position = v[fourth_index];
 
-    let opcode = *v.get(first_index).unwrap();
-    let new_opcode_position = opcode_position + (4 as u64);
+    let opcode = match v.get(first_index) {
+        Some(number) => *number,
+        None => panic!("something at this index")
+    };
 
+    let new_opcode_position = opcode_position + (4 as u64);
+    
     print!("new opcode position - {}", new_opcode_position);
 
     if opcode == (1 as u64) {
@@ -44,6 +55,7 @@ fn run_program(mut v: Vec<u64>, opcode_position: u64) -> u64 {
         let first_add = v.get(second_index).unwrap();
         let second_add = v.get(third_index).unwrap();
         let sum = v[*first_add as usize] + v[*second_add as usize];
+        print!("{},{},{}", first_add, second_add, sum);
         v[set_position as usize] = sum;
     } else if opcode == (2 as u64) {
         print!("mult\n");
@@ -56,7 +68,7 @@ fn run_program(mut v: Vec<u64>, opcode_position: u64) -> u64 {
     }
 
 
-    
+
 
     return run_program(v,new_opcode_position);
 }
