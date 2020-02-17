@@ -67,8 +67,5 @@ fn run_program(mut v: Vec<u64>, opcode_position: u64) -> u64 {
         return *v.get(0).unwrap();  
     }
 
-
-
-
     return run_program(v,new_opcode_position);
 }
