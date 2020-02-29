@@ -14,41 +14,25 @@ fn main() {
         Err(error) => panic!("An error reaidng file : {}\n", error)
     };
 
+    // array of both lines
     let data = read_input(&file_string);
 
     // tuples of the coordinates
     let mut first_line_path: Vec<(i32,i32)> = Vec::new();
     let mut second_line_path: Vec<(i32,i32)> = Vec::new();
+    let mut cross_points: Vec<i32> = Vec::new();
 
-    // loop through the first rope
-    for i in &data[0] {
-        // get direction
-        let mut characters = i.chars();
-        let direction = match characters.next() {
-            Some(c) => c,
-            None => panic!()
-        };
-        print!("{}\n", direction);
+    loop_through_instructions(&data[0], &mut first_line_path);
+    loop_through_instructions(&data[1], &mut second_line_path);
 
-        // build string and parse as number
-        let mut string_int = String::new();
-        for z in 0..characters.as_str().len() {
-            match characters.next() {
-                Some(character) => string_int.push(character),
-                None => panic!()
-            };
-        }
-        let number_of_steps = match string_int.parse::<i32>() {
-            Ok(num) => num,
-            Err(err) => panic!()
-        };
-        print!("{}\n", number_of_steps);
+    println!("{}", first_line_path.len());
 
-        add_points_to_path(&mut first_line_path, &direction, &number_of_steps);
-    }
-
-    // loop through the second path
     // find the matching tuples
+    find_cross_points(&mut cross_points, &mut first_line_path, &mut second_line_path);
+    cross_points.sort_unstable();
+    let shortest_distance = cross_points[0];
+
+    println!("This is the shortest_distance : {}", shortest_distance);
     // calculate distances to the center
 }
 
@@ -75,6 +59,44 @@ fn read_input(file_string: &str) -> Vec<Vec<&str>> {
 
 fn gather_points(instructions: Vec<&str>) {
 
+}
+
+fn find_cross_points(cross_points: &mut Vec<i32>, first_line: &mut Vec<(i32,i32)>, second_line: &mut Vec<(i32,i32)>) {
+    for i in first_line {
+        if second_line.contains(i) {
+            let val = i.0.abs() + i.1.abs();
+            println!("{}-{}", i.0, i.1);
+            cross_points.push(val);
+        }
+    }
+}
+
+fn loop_through_instructions(line_instructions: &Vec<&str>, line_path: &mut Vec<(i32,i32)>) {
+    for i in line_instructions {
+        // get direction
+        let mut characters = i.chars();
+        let direction = match characters.next() {
+            Some(c) => c,
+            None => panic!()
+        };
+        print!("{}\n", direction);
+
+        // build string and parse as number
+        let mut string_int = String::new();
+        for z in 0..characters.as_str().len() {
+            match characters.next() {
+                Some(character) => string_int.push(character),
+                None => panic!()
+            };
+        }
+        let number_of_steps = match string_int.parse::<i32>() {
+            Ok(num) => num,
+            Err(err) => panic!()
+        };
+        print!("{}\n", number_of_steps);
+
+        add_points_to_path(line_path, &direction, &number_of_steps);
+    }
 }
 
 fn add_points_to_path(path: &mut Vec<(i32,i32)>, direction: &char, steps_in_direction: &i32) {
